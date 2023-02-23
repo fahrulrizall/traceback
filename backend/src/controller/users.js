@@ -83,6 +83,23 @@ const createNewUser = async (req, res) => {
 const updateUser = async (req, res) => {
   const { uuid } = req.params;
   const request = req.body;
+  const errros = validationResult(req);
+
+  if (!errros.isEmpty()) {
+    res.status(400).json({
+      messages: errros.array(),
+    });
+    return;
+  }
+
+  const [data] = await UsersModel.readUser(uuid);
+
+  if (data.length === 0) {
+    res.status(400).json({
+      messages: "uuid not exist",
+    });
+    return;
+  }
 
   try {
     await UsersModel.updateUser(request, uuid);
@@ -102,6 +119,15 @@ const updateUser = async (req, res) => {
 const deleteUser = async (req, res) => {
   const { uuid } = req.params;
 
+  const [data] = await UsersModel.readUser(uuid);
+
+  if (data.length === 0) {
+    res.status(400).json({
+      messages: "uuid not exist",
+    });
+    return;
+  }
+
   try {
     await UsersModel.deleteUser(uuid);
     res.json({
@@ -109,7 +135,7 @@ const deleteUser = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
-      message: `delete user ${req.params.id}`,
+      message: `delete user ${uuid}`,
     });
   }
 };
@@ -125,7 +151,7 @@ const readUser = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
-      message: `read user ${req.params.uuid}`,
+      message: `uuid not exist`,
     });
   }
 };
