@@ -1,16 +1,15 @@
-const UsersModel = require("../models/users");
-const { validationResult } = require("express-validator");
-const bcrypt = require("bcrypt");
+import { validationResult } from "express-validator";
+import bcrypt from "bcrypt";
+import UsersModel from "../models/users.js";
 
 const pagedSearchUsers = async (req, res) => {
   const errros = validationResult(req);
   const { pageIndex, pageSize } = req.query;
 
   if (!errros.isEmpty()) {
-    res.status(400).json({
+    return res.status(400).json({
       messages: errros.array(),
     });
-    return;
   }
 
   try {
@@ -34,28 +33,25 @@ const createNewUser = async (req, res) => {
   const request = req.body;
 
   if (!errros.isEmpty()) {
-    res.status(400).json({
+    return res.status(400).json({
       messages: errros.array(),
     });
-    return;
   }
 
   const [email] = await UsersModel.emailUserExist(request.email);
 
   if (email.length > 0) {
-    res.status(400).json({
+    return res.status(400).json({
       messages: "Email already exist",
     });
-    return;
   }
 
   const [username] = await UsersModel.userNameExist(request.username);
 
   if (username.length > 0) {
-    res.status(400).json({
+    return res.status(400).json({
       messages: "Username already exist",
     });
-    return;
   }
 
   const salt = await bcrypt.genSalt(10);
@@ -86,19 +82,17 @@ const updateUser = async (req, res) => {
   const errros = validationResult(req);
 
   if (!errros.isEmpty()) {
-    res.status(400).json({
+    return res.status(400).json({
       messages: errros.array(),
     });
-    return;
   }
 
   const [data] = await UsersModel.readUser(uuid);
 
   if (data.length === 0) {
-    res.status(400).json({
+    return res.status(400).json({
       messages: "uuid not exist",
     });
-    return;
   }
 
   try {
@@ -122,10 +116,9 @@ const deleteUser = async (req, res) => {
   const [data] = await UsersModel.readUser(uuid);
 
   if (data.length === 0) {
-    res.status(400).json({
+    return res.status(400).json({
       messages: "uuid not exist",
     });
-    return;
   }
 
   try {
@@ -156,7 +149,7 @@ const readUser = async (req, res) => {
   }
 };
 
-module.exports = {
+export default {
   pagedSearchUsers,
   createNewUser,
   updateUser,

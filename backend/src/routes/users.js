@@ -1,11 +1,10 @@
-const express = require("express");
-const { body, query } = require("express-validator");
+import express from "express";
+import { body, query } from "express-validator";
+import UserController from "../controller/users.js";
 
-const UserController = require("../controller/users");
+const userRoutes = express.Router();
 
-const router = express.Router();
-
-router.post(
+userRoutes.post(
   "/",
   [
     body("name").isLength({ min: 3 }).withMessage("name min 3"),
@@ -15,12 +14,12 @@ router.post(
   ],
   UserController.createNewUser
 );
-router.get(
+userRoutes.get(
   "/search",
   [query("pageIndex").not().isEmpty(), query("pageSize").not().isEmpty()],
   UserController.pagedSearchUsers
 );
-router.patch(
+userRoutes.patch(
   "/:uuid",
   [
     body("name").isLength({ min: 3 }).withMessage("name min 3"),
@@ -29,7 +28,7 @@ router.patch(
   ],
   UserController.updateUser
 );
-router.delete("/:uuid", UserController.deleteUser);
-router.get("/:uuid", UserController.readUser);
+userRoutes.delete("/:uuid", UserController.deleteUser);
+userRoutes.get("/:uuid", UserController.readUser);
 
-module.exports = router;
+export default userRoutes;

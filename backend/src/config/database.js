@@ -1,5 +1,6 @@
-const mysql = require("mysql2");
-require("dotenv").config();
+import mysql from "mysql2";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 const DBpool = mysql.createPool({
   host: process.env.DB_HOST,
@@ -8,4 +9,4 @@ const DBpool = mysql.createPool({
   database: process.env.DB_NAME,
 });
 
-module.exports = DBpool.promise();
+export default DBpool.promise();
