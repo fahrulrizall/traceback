@@ -1,4 +1,5 @@
 require("dotenv").config();
+const bodyParser = require("body-parser");
 
 const port = process.env.PORT;
 
@@ -8,11 +9,11 @@ const middlewareLogReq = require("./middleware/logs");
 
 const app = express();
 
+app.use(bodyParser.json()); // accept json
+
 app.use(middlewareLogReq);
 app.use(express.json());
 
 app.use("/users", usersRoutes);
 
-app.listen(port, () => {
-  console.log(`server berhasil running ${port}`);
-});
+app.listen(port);

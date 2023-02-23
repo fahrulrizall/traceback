@@ -1,60 +1,95 @@
 const UsersModel = require("../models/users");
-const encyrpt = require("../utility/encryptpassword");
+const { validationResult } = require("express-validator");
+const bcrypt = require("bcrypt");
 
 const pagedSearchUsers = async (req, res) => {
+  const errros = validationResult(req);
   const { pageIndex, pageSize } = req.query;
+
+  if (!errros.isEmpty()) {
+    res.status(400).json({
+      messages: errros.array(),
+    });
+    return;
+  }
 
   try {
     const [data] = await UsersModel.pagedSearchUsers(pageIndex, pageSize);
 
+    const [totalCountUsers] = await UsersModel.totalCountUsers();
+
     res.json({
+      totalCount: totalCountUsers[0].totalCount,
       data: data,
     });
   } catch (error) {
     res.status(500).json({
-      message: "Server error",
+      message: error,
     });
   }
 };
 
 const createNewUser = async (req, res) => {
-  const { body } = req;
+  const errros = validationResult(req);
+  const request = req.body;
 
-  const hashPassword = encyrpt.cryptPassword(body.password, (err, hash) => {
-    console.log(hash);
-    return hash;
-  });
+  if (!errros.isEmpty()) {
+    res.status(400).json({
+      messages: errros.array(),
+    });
+    return;
+  }
 
-  console.log(hashPassword);
+  const [email] = await UsersModel.emailUserExist(request.email);
+
+  if (email.length > 0) {
+    res.status(400).json({
+      messages: "Email already exist",
+    });
+    return;
+  }
+
+  const [username] = await UsersModel.userNameExist(request.username);
+
+  if (username.length > 0) {
+    res.status(400).json({
+      messages: "Username already exist",
+    });
+    return;
+  }
+
+  const salt = await bcrypt.genSalt(10);
+  const hashPassword = await bcrypt.hash(request.password, salt);
 
   const data = {
-    name: body.name,
-    email: body.email,
+    name: request.name,
+    email: request.email,
     password: hashPassword,
+    username: request.username,
   };
 
   try {
     await UsersModel.createNewUser(data);
-    res.json({
-      data: body,
+    res.status(201).json({
+      messages: request,
     });
   } catch (error) {
     res.status(500).json({
-      message: "Server error",
+      messages: request,
     });
   }
 };
 
 const updateUser = async (req, res) => {
   const { uuid } = req.params;
-  const { body } = req;
+  const request = req.body;
 
   try {
-    await UsersModel.updateUser(body, uuid);
+    await UsersModel.updateUser(request, uuid);
     res.json({
       data: {
         id: uuid,
-        ...body,
+        ...request,
       },
     });
   } catch (error) {
