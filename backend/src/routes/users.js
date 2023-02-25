@@ -1,13 +1,34 @@
-const express = require("express");
+import express from "express";
+import { body, query } from "express-validator";
+import UserController from "../controller/users.js";
 
-const UserController = require("../controller/users");
+const userRoutes = express.Router();
 
-const router = express.Router();
+userRoutes.post(
+  "/",
+  [
+    body("name").isLength({ min: 3 }).withMessage("name min 3"),
+    body("email").isEmail().withMessage("invalid email address"),
+    body("username").isLength({ min: 8 }).withMessage("username min 8"),
+    body("password").isLength({ min: 8 }).withMessage("password min 8"),
+  ],
+  UserController.createNewUser
+);
+userRoutes.get(
+  "/search",
+  [query("pageIndex").not().isEmpty(), query("pageSize").not().isEmpty()],
+  UserController.pagedSearchUsers
+);
+userRoutes.patch(
+  "/:uuid",
+  [
+    body("name").isLength({ min: 3 }).withMessage("name min 3"),
+    body("email").isEmail().withMessage("invalid email address"),
+    body("username").isLength({ min: 8 }).withMessage("username min 8"),
+  ],
+  UserController.updateUser
+);
+userRoutes.delete("/:uuid", UserController.deleteUser);
+userRoutes.get("/:uuid", UserController.readUser);
 
-router.post("/", UserController.createNewUser);
-router.get("/search", UserController.pagedSearchUsers);
-router.patch("/:uuid", UserController.updateUser);
-router.delete("/:uuid", UserController.deleteUser);
-router.get("/:uuid", UserController.readUser);
-
-module.exports = router;
+export default userRoutes;

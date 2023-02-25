@@ -1,4 +1,4 @@
-const bcrypt = require("bcrypt");
+import bcrypt from "bcrypt";
 
 const cryptPassword = (password, callback) => {
   bcrypt.genSalt(10, function (err, salt) {
@@ -16,4 +16,4 @@ const comparePassword = (plainPass, hashword, callback) => {
   });
 };
 
-module.exports = { cryptPassword, comparePassword };
+export default { cryptPassword, comparePassword };
