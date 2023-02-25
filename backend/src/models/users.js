@@ -16,7 +16,9 @@ const totalCountUsers = () => {
 };
 
 const createNewUser = (body) => {
-  const SQLQuery = `INSERT INTO users (uuid, name, username, email, password, createdDateTime) VALUES ('${uuidv4}','${body.name}','${body.username}','${body.email}','${body.password}', UTC_TIMESTAMP())`;
+  const SQLQuery = `INSERT INTO users (uuid, name, username, email, password, createdDateTime) VALUES ('${uuidv4()}','${
+    body.name
+  }','${body.username}','${body.email}','${body.password}', UTC_TIMESTAMP())`;
 
   return DBpool.execute(SQLQuery);
 };
