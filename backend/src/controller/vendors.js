@@ -38,7 +38,7 @@ const createNewVendor = async (req, res) => {
   }
 
   const data = {
-    name: request.name,
+    supplierName: request.supplierName,
     certificateType: request.certificateType,
     fleet: request.fleet,
     owner: request.owner,
@@ -79,7 +79,7 @@ const updateVendor = async (req, res) => {
   }
 
   try {
-    await VendorsModel.updatePlant(request, uuid);
+    await VendorsModel.updateVendor(request, uuid);
     res.json({
       data: {
         id: uuid,

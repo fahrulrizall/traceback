@@ -15,23 +15,17 @@ vendorRoutes.post(
     body("supplierName").notEmpty().withMessage("supplier name required"),
     body("certificateType").notEmpty().withMessage("certificate type required"),
     body("owner").notEmpty().withMessage("owner required"),
-    body("materialType").notEmpty().withMessage("material type required"),
-    body("fairtradeNo").notEmpty().withMessage("fair trade no required"),
+    body("rawMaterialType").notEmpty().withMessage("material type required"),
   ],
   VendorController.createNewVendor
 );
 vendorRoutes.patch(
   "/:uuid",
   [
-    body("name").notEmpty().withMessage("name required"),
+    body("supplierName").notEmpty().withMessage("supplier name required"),
     body("certificateType").notEmpty().withMessage("certificate type required"),
-    body("owner").isLength({ min: 8 }).withMessage("owner required"),
-    body("materialType")
-      .isLength({ min: 8 })
-      .withMessage("material type required"),
-    body("fairtradeNo")
-      .isLength({ min: 8 })
-      .withMessage("fair trade no required"),
+    body("owner").notEmpty().withMessage("owner required"),
+    body("rawMaterialType").notEmpty().withMessage("material type required"),
   ],
   VendorController.updateVendor
 );

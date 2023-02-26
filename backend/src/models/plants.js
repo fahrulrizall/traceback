@@ -36,7 +36,7 @@ const deletePlant = (uuid) => {
 };
 
 const readPlant = (uuid) => {
-  const SQLQuery = `SELECT * FROM plants WHERE uuid='${uuid}'`;
+  const SQLQuery = `SELECT uuid, name, location, batchCode FROM plants WHERE uuid='${uuid}'`;
 
   return DBpool.execute(SQLQuery);
 };

@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import DBpool from "../config/database.js";
 
 const pagedSearchVendors = (pageIndex, pageSize) => {
-  const SQLQuery = `SELECT uuid, supplierName, certificateType, fleet, owner, materialType, fairtradeNo FROM vendors ORDER BY createdDateTime DESC LIMIT ${pageSize} OFFSET ${
+  const SQLQuery = `SELECT uuid, supplierName, certificateType, fleet, owner, rawMaterialType FROM vendors ORDER BY createdDateTime DESC LIMIT ${pageSize} OFFSET ${
     pageIndex * pageSize
   }`;
 
@@ -16,17 +16,17 @@ const totalCountVendors = () => {
 };
 
 const createNewVendors = (body) => {
-  const SQLQuery = `INSERT INTO vendors (uuid, supplierName, certificateType, fleet, owner, materialType, fairtradeNo, createdDateTime) VALUES ('${uuidv4()}','${
-    body.supplierName
-  }','${body.certificateType}','${body.fleet}','${body.owner}','${
-    body.materialType
-  }','${body.fairtradeNo}', UTC_TIMESTAMP())`;
+  const SQLQuery = `INSERT INTO vendors (uuid, supplierName, certificateType, fleet, owner, rawMaterialType, idPlant, createdDateTime) 
+  VALUES ('${uuidv4()}','${body.supplierName}',
+  '${body.certificateType}','${body.fleet}','${body.owner}','${
+    body.rawMaterialType
+  }','${body.idPlant}', UTC_TIMESTAMP())`;
 
   return DBpool.execute(SQLQuery);
 };
 
 const updateVendor = (body, uuid) => {
-  const SQLQuery = `UPDATE vendors SET name='${body.name}', certificateType='${body.certificateType}', fleet='${body.fleet}', owner='${body.owner}', materialType='${body.materialType}',fairtradeNo='${body.fairtradeNo}',lastModifiedDateTime='UTC_TIMESTAMP()'  WHERE uuid='${uuid}'`;
+  const SQLQuery = `UPDATE vendors SET supplierName='${body.supplierName}', certificateType='${body.certificateType}', fleet='${body.fleet}', owner='${body.owner}', rawmaterialType='${body.rawmaterialType}',lastModifiedDateTime='UTC_TIMESTAMP()' WHERE uuid='${uuid}'`;
 
   return DBpool.execute(SQLQuery);
 };
@@ -38,7 +38,7 @@ const deleteVendor = (uuid) => {
 };
 
 const readVendor = (uuid) => {
-  const SQLQuery = `SELECT * FROM vendors WHERE uuid='${uuid}'`;
+  const SQLQuery = `SELECT uuid, supplierName, certificateType, fleet, owner, rawMaterialType FROM vendors WHERE uuid='${uuid}'`;
 
   return DBpool.execute(SQLQuery);
 };
