@@ -1,7 +1,7 @@
 import { validationResult } from "express-validator";
-import PlantsModel from "../models/plants.js";
+import ReceivingModel from "../models/receiving.js";
 
-const pagedSearchPlants = async (req, res) => {
+const pagedSearchReceiving = async (req, res) => {
   const errros = validationResult(req);
   const { pageIndex, pageSize } = req.query;
 
@@ -12,9 +12,12 @@ const pagedSearchPlants = async (req, res) => {
   }
 
   try {
-    const [data] = await PlantsModel.pagedSearchPlants(pageIndex, pageSize);
+    const [data] = await ReceivingModel.pagedSearchReceiving(
+      pageIndex,
+      pageSize
+    );
 
-    const [totalCountPlants] = await PlantsModel.totalCountPlants();
+    const [totalCountPlants] = await ReceivingModel.totalCountReceiving();
 
     res.json({
       totalCount: totalCountPlants[0].totalCount,
@@ -27,7 +30,7 @@ const pagedSearchPlants = async (req, res) => {
   }
 };
 
-const createNewPlant = async (req, res) => {
+const createNewReceiving = async (req, res) => {
   const errros = validationResult(req);
   const request = req.body;
 
@@ -37,14 +40,8 @@ const createNewPlant = async (req, res) => {
     });
   }
 
-  const data = {
-    name: request.name,
-    location: request.location,
-    batchCode: request.batchCode,
-  };
-
   try {
-    await PlantsModel.createNewPlant(data);
+    await ReceivingModel.createNewReceiving(request);
     res.status(201).json({
       messages: request,
     });
@@ -55,7 +52,7 @@ const createNewPlant = async (req, res) => {
   }
 };
 
-const updatePlant = async (req, res) => {
+const updateReceiving = async (req, res) => {
   const { uuid } = req.params;
   const request = req.body;
   const errros = validationResult(req);
@@ -66,7 +63,7 @@ const updatePlant = async (req, res) => {
     });
   }
 
-  const [data] = await PlantsModel.readPlant(uuid);
+  const [data] = await ReceivingModel.readReceiving(uuid);
 
   if (data.length === 0) {
     return res.status(400).json({
@@ -75,7 +72,7 @@ const updatePlant = async (req, res) => {
   }
 
   try {
-    await PlantsModel.updatePlant(request, uuid);
+    await ReceivingModel.updateReceiving(request, uuid);
     res.json({
       data: {
         id: uuid,
@@ -89,10 +86,10 @@ const updatePlant = async (req, res) => {
   }
 };
 
-const deletePlant = async (req, res) => {
+const deleteReceiving = async (req, res) => {
   const { uuid } = req.params;
 
-  const [data] = await PlantsModel.readPlant(uuid);
+  const [data] = await ReceivingModel.readReceiving(uuid);
 
   if (data.length === 0) {
     return res.status(400).json({
@@ -101,7 +98,7 @@ const deletePlant = async (req, res) => {
   }
 
   try {
-    await PlantsModel.deletePlant(uuid);
+    await ReceivingModel.deleteReceiving(uuid);
     res.json({
       id: uuid,
     });
@@ -112,11 +109,11 @@ const deletePlant = async (req, res) => {
   }
 };
 
-const readPlant = async (req, res) => {
+const readReceiving = async (req, res) => {
   const { uuid } = req.params;
 
   try {
-    const [data] = await PlantsModel.readPlant(uuid);
+    const [data] = await ReceivingModel.readReceiving(uuid);
 
     res.json({
       data: data[0],
@@ -129,9 +126,9 @@ const readPlant = async (req, res) => {
 };
 
 export default {
-  pagedSearchPlants,
-  createNewPlant,
-  updatePlant,
-  deletePlant,
-  readPlant,
+  pagedSearchReceiving,
+  createNewReceiving,
+  updateReceiving,
+  deleteReceiving,
+  readReceiving,
 };

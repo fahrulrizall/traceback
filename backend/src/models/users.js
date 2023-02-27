@@ -48,7 +48,7 @@ const emailUserExist = (email) => {
 };
 
 const userNameExist = (username) => {
-  const SQLQuery = `SELECT username FROM users WHERE username='${username}'`;
+  const SQLQuery = `SELECT uuid, username, password FROM users WHERE username='${username}'`;
 
   return DBpool.execute(SQLQuery);
 };

@@ -7,7 +7,7 @@ const plantRoutes = express.Router();
 plantRoutes.get(
   "/search",
   [query("pageIndex").not().isEmpty(), query("pageSize").not().isEmpty()],
-  PlantContoller.pagedSearchUsers
+  PlantContoller.pagedSearchPlants
 );
 plantRoutes.post(
   "/",
