@@ -16,7 +16,9 @@ const totalCountUsers = () => {
 };
 
 const createNewUser = (body) => {
-  const SQLQuery = `INSERT INTO users (uuid, name, username, email, password, createdDateTime) VALUES ('${uuidv4}','${body.name}','${body.username}','${body.email}','${body.password}', UTC_TIMESTAMP())`;
+  const SQLQuery = `INSERT INTO users (uuid, name, username, email, password, createdDateTime) VALUES ('${uuidv4()}','${
+    body.name
+  }','${body.username}','${body.email}','${body.password}', UTC_TIMESTAMP())`;
 
   return DBpool.execute(SQLQuery);
 };
@@ -40,13 +42,13 @@ const readUser = (uuid) => {
 };
 
 const emailUserExist = (email) => {
-  const SQLQuery = `SELECT * FROM users WHERE email='${email}'`;
+  const SQLQuery = `SELECT email FROM users WHERE email='${email}'`;
 
   return DBpool.execute(SQLQuery);
 };
 
 const userNameExist = (username) => {
-  const SQLQuery = `SELECT * FROM users WHERE username='${username}'`;
+  const SQLQuery = `SELECT uuid, username, password FROM users WHERE username='${username}'`;
 
   return DBpool.execute(SQLQuery);
 };
@@ -58,7 +60,7 @@ const updateRefreshToken = (token, uuid) => {
 };
 
 const readRefreshToken = (token) => {
-  const SQLQuery = `SELECT * FROM users WHERE refreshToken='${token}'`;
+  const SQLQuery = `SELECT refreshToken FROM users WHERE refreshToken='${token}'`;
 
   return DBpool.execute(SQLQuery);
 };

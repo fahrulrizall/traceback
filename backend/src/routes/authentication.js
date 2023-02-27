@@ -4,6 +4,7 @@ import AuthController from "../controller/authentication.js";
 const authRoutes = express.Router();
 
 authRoutes.post("/login", AuthController.login);
-authRoutes.post("/logout", AuthController.logout);
+authRoutes.delete("/logout", AuthController.logout);
+authRoutes.get("/token", AuthController.refreshToken);
 
 export default authRoutes;

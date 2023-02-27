@@ -1,6 +1,6 @@
 import UsersModel from "../models/users.js";
 import bcrypt from "bcrypt";
-import Jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 const login = async (req, res) => {
   try {
@@ -27,7 +27,7 @@ const login = async (req, res) => {
     const username = data[0].username;
     const email = data[0].email;
 
-    const accessToken = Jwt.sign(
+    const accessToken = jwt.sign(
       { uuid, username, email },
       process.env.ACCESS_TOKEN_SECRET,
       {
@@ -35,7 +35,7 @@ const login = async (req, res) => {
       }
     );
 
-    const refreshToken = Jwt.sign(
+    const refreshToken = jwt.sign(
       { uuid, username, email },
       process.env.REFRESH_TOKEN_SECRET,
       {
@@ -62,19 +62,51 @@ const login = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-  const { uuid } = req.params;
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken) return res.sendStatus(204);
+  const [data] = await UsersModel.readRefreshToken(refreshToken);
 
+  if (!data[0]) return res.sendStatus(204);
+  const uuid = data[0].uuid;
+  await UsersModel.updateRefreshToken(null, uuid);
+  res.clearCookie("refreshToken");
+  return res.sendStatus(200);
+};
+
+const refreshToken = async (req, res) => {
   try {
-    const [data] = await UsersModel.readUser(uuid);
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) return res.sendStatus(401);
+    const [data] = await UsersModel.readRefreshToken(refreshToken);
 
-    res.json({
-      data: data[0],
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: `uuid not exist`,
-    });
+    if (!data[0]) return res.sendStatus(403);
+
+    jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET,
+      (err, decode) => {
+        if (err) return res.sendStatus(403);
+
+        const uuid = data[0].uuid;
+        const username = data[0].username;
+        const email = data[0].email;
+
+        const accessToken = jwt.sign(
+          { uuid, username, email },
+          process.env.ACCESS_TOKEN_SECRET,
+          {
+            expiresIn: "1d",
+          }
+        );
+
+        res.json({
+          accessToken,
+        });
+      }
+    );
+  } catch (err) {
+    return res.sendStatus(403);
   }
 };
 
-export default { login, logout };
+export default { login, logout, refreshToken };

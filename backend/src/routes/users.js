@@ -4,6 +4,11 @@ import UserController from "../controller/users.js";
 
 const userRoutes = express.Router();
 
+userRoutes.get(
+  "/search",
+  [query("pageIndex").not().isEmpty(), query("pageSize").not().isEmpty()],
+  UserController.pagedSearchUsers
+);
 userRoutes.post(
   "/",
   [
@@ -13,11 +18,6 @@ userRoutes.post(
     body("password").isLength({ min: 8 }).withMessage("password min 8"),
   ],
   UserController.createNewUser
-);
-userRoutes.get(
-  "/search",
-  [query("pageIndex").not().isEmpty(), query("pageSize").not().isEmpty()],
-  UserController.pagedSearchUsers
 );
 userRoutes.patch(
   "/:uuid",
