@@ -1,5 +1,6 @@
 import { validationResult } from "express-validator";
 import ReceivingModel from "../models/receiving.js";
+import VendorsModel from "../models/vendors.js";
 
 const pagedSearchReceiving = async (req, res) => {
   const errros = validationResult(req);
@@ -16,6 +17,18 @@ const pagedSearchReceiving = async (req, res) => {
       pageIndex,
       pageSize
     );
+
+    data.map((item) => {
+      (item.receivingDate = new Date(item.receivingDate).toLocaleDateString(
+        "id-ID",
+        {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        }
+      )),
+        (item.fishCode = "asdasd");
+    });
 
     const [totalCountPlants] = await ReceivingModel.totalCountReceiving();
 
@@ -40,8 +53,10 @@ const createNewReceiving = async (req, res) => {
     });
   }
 
+  const [vendor] = await VendorsModel.readUuid(request.vendorUuid);
+
   try {
-    await ReceivingModel.createNewReceiving(request);
+    await ReceivingModel.createNewReceiving(request, vendor[0].idVendor);
     res.status(201).json({
       messages: request,
     });

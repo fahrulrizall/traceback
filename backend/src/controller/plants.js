@@ -27,6 +27,20 @@ const pagedSearchPlants = async (req, res) => {
   }
 };
 
+const getAllPlants = async (req, res) => {
+  try {
+    const [data] = await PlantsModel.getAllPlants();
+
+    res.json({
+      data: data,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error,
+    });
+  }
+};
+
 const createNewPlant = async (req, res) => {
   const errros = validationResult(req);
   const request = req.body;
@@ -37,14 +51,8 @@ const createNewPlant = async (req, res) => {
     });
   }
 
-  const data = {
-    name: request.name,
-    location: request.location,
-    batchCode: request.batchCode,
-  };
-
   try {
-    await PlantsModel.createNewPlant(data);
+    await PlantsModel.createNewPlant(request);
     res.status(201).json({
       messages: request,
     });
@@ -102,6 +110,7 @@ const deletePlant = async (req, res) => {
 
   try {
     await PlantsModel.deletePlant(uuid);
+
     res.json({
       id: uuid,
     });
@@ -130,6 +139,7 @@ const readPlant = async (req, res) => {
 
 export default {
   pagedSearchPlants,
+  getAllPlants,
   createNewPlant,
   updatePlant,
   deletePlant,

@@ -15,12 +15,12 @@ const totalCountReceiving = () => {
   return DBpool.execute(SQLQuery);
 };
 
-const createNewReceiving = (body) => {
+const createNewReceiving = (body, idVendor) => {
   const SQLQuery = `INSERT INTO receiving (uuid, receivingDate, pcs, grade, size, weight, idVendor, createdDateTime) VALUES ('${uuidv4()}','${
     body.receivingDate
-  }','${body.pcs}','${body.grade}','${body.size}','${body.weight}','${
-    body.idVendor
-  }', UTC_TIMESTAMP())`;
+  }','${body.pcs}','${body.grade}','${body.size}','${
+    body.weight
+  }','${idVendor}', UTC_TIMESTAMP())`;
 
   return DBpool.execute(SQLQuery);
 };

@@ -17,7 +17,6 @@ receivingRoutes.post(
     body("grade").notEmpty().withMessage("grade date mandatory"),
     body("size").notEmpty().withMessage("size date mandatory"),
     body("weight").notEmpty().withMessage("weight date mandatory"),
-    body("idVendor").notEmpty().withMessage("idVendor date mandatory"),
   ],
   ReceivingContoller.createNewReceiving
 );

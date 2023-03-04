@@ -31,5 +31,6 @@ vendorRoutes.patch(
 );
 vendorRoutes.delete("/:uuid", VendorController.deleteVendor);
 vendorRoutes.get("/:uuid", VendorController.readVendor);
+vendorRoutes.get("/searchcode/:code", VendorController.getVendorCode);
 
 export default vendorRoutes;

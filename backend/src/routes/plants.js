@@ -4,6 +4,7 @@ import PlantContoller from "../controller/plants.js";
 
 const plantRoutes = express.Router();
 
+plantRoutes.get("/", PlantContoller.getAllPlants);
 plantRoutes.get(
   "/search",
   [query("pageIndex").not().isEmpty(), query("pageSize").not().isEmpty()],
