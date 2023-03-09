@@ -1,5 +1,5 @@
-import { v4 as uuidv4 } from "uuid";
-import DBpool from "../config/database.js";
+const { v4: uuidv4 } = require("uuid");
+const DBpool = require("../config/database.js");
 
 const pagedSearchTrimming = (pageIndex, pageSize) => {
   const SQLQuery = `SELECT uuid, trimmingDate, weight, size, remarks FROM trimming ORDER BY createdDateTime DESC LIMIT ${pageSize} OFFSET ${
@@ -43,7 +43,7 @@ const readTrimming = (uuid) => {
   return DBpool.execute(SQLQuery);
 };
 
-export default {
+module.exports = {
   pagedSearchTrimming,
   createNewTrimming,
   totalCountTrimming,

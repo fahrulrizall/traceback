@@ -1,5 +1,5 @@
-import { v4 as uuidv4 } from "uuid";
-import DBpool from "../config/database.js";
+const { v4: uuidv4 } = require("uuid");
+const DBpool = require("../config/database.js");
 
 const pagedSearchVendors = (pageIndex, pageSize) => {
   const SQLQuery = `SELECT vendors.uuid, vendors.vendorCode, vendors.supplierName, vendors.certificateType, vendors.fleet, vendors.owner, vendors.rawMaterialType, plants.plantCode 
@@ -61,7 +61,7 @@ const readUuid = (uuid) => {
   return DBpool.execute(SQLQuery);
 };
 
-export default {
+module.exports = {
   pagedSearchVendors,
   createNewVendors,
   totalCountVendors,

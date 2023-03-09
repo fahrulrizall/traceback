@@ -1,6 +1,6 @@
-import UsersModel from "../models/users.js";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+const UsersModel = require("../models/users.js");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const login = async (req, res) => {
   try {
@@ -109,4 +109,4 @@ const refreshToken = async (req, res) => {
   }
 };
 
-export default { login, logout, refreshToken };
+module.exports = { login, logout, refreshToken };

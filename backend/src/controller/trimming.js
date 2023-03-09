@@ -1,5 +1,5 @@
-import { validationResult } from "express-validator";
-import TrimmingModel from "../models/trimming.js";
+const { validationResult } = require("express-validator");
+const TrimmingModel = require("../models/trimming.js");
 
 const pagedSearchTrimming = async (req, res) => {
   const errros = validationResult(req);
@@ -122,7 +122,7 @@ const readTrimming = async (req, res) => {
   }
 };
 
-export default {
+module.exports = {
   pagedSearchTrimming,
   createNewTrimming,
   updateTrimming,

@@ -1,12 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { Form } from "react-bootstrap";
 import { GetVendorCode } from "../../API/vendor";
-import { CreateNewReceiving } from "../../API/receiving";
-import { useNavigate } from "react-router-dom";
+import {
+  CreateNewReceiving,
+  ReadByUuid,
+  Update,
+  Delete,
+} from "../../API/receiving";
+import { useNavigate, useParams } from "react-router-dom";
+import { useApplicationStoreContext } from "../../Hook/UserHook";
+import { ModalPopUp } from "../../Components";
 
 export default function ReceivingForm() {
   const navigate = useNavigate();
-
+  const { uuid } = useParams();
+  const { setIsShowModal, setLastDataModificationTimestamp } =
+    useApplicationStoreContext();
   const initialData = {
     receivingDate: "",
     pcs: "",
@@ -23,23 +32,79 @@ export default function ReceivingForm() {
   };
 
   const [data, setData] = useState(initialData);
-  const [selectedVendor, setSelectedVendor] = useState();
+  const [vendorList, setVendorList] = useState();
   const [isShowVendor, setIsShowVendor] = useState(false);
   const [action, setAction] = useState(initialAction.create);
 
   useEffect(() => {
-    if (data.vendorCode.length === 3) {
+    if (data.vendorCode && data.vendorCode.length === 3) {
       GetVendorCode(data.vendorCode).then((response) => {
-        setSelectedVendor(response.data.data);
-        setIsShowVendor(true);
+        setVendorList(response.data.data);
       });
     } else {
-      setSelectedVendor();
+      setVendorList();
     }
   }, [data.vendorCode]);
 
   const handleSubmit = () => {
-    CreateNewReceiving(data).then(() => console.log("berhasil"));
+    navigate("/receiving");
+    if (action == initialAction.create) {
+      CreateNewReceiving(data).then(() => {
+        setLastDataModificationTimestamp(new Date());
+      });
+    } else {
+      Update(uuid, data).then((response) => {
+        setLastDataModificationTimestamp(new Date().getTime());
+      });
+    }
+  };
+
+  const deleteData = () => {
+    Delete(uuid).then(() => {
+      setIsShowModal(false);
+      setLastDataModificationTimestamp(new Date().getTime());
+      navigate("/receiving");
+    });
+  };
+
+  useEffect(() => {
+    if (uuid) {
+      setAction(initialAction.view);
+      ReadByUuid(uuid).then((response) => setData(response.data.data));
+    }
+  }, [uuid]);
+
+  const component = () => {
+    return (
+      <div className="modal-content">
+        <div className="modal-header">
+          <h5 className="modal-title">Delete Receiving</h5>
+          <button
+            type="button"
+            className="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div className="modal-body">Are you sure delete this receiving?</div>
+        <div className="modal-footer">
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => setIsShowModal(false)}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            className="btn btn-danger"
+            onClick={() => deleteData()}
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -140,23 +205,22 @@ export default function ReceivingForm() {
                   list="vendors"
                   onChange={(e) => {
                     setData({ ...data, vendorCode: e.target.value });
+                    setIsShowVendor(true);
                   }}
                   value={data.vendorCode}
                 />
-                {isShowVendor && (
+                {isShowVendor && vendorList && (
                   <div className="form-control">
                     <a
                       onClick={() => {
-                        setData({ ...data, vendorUuid: selectedVendor.uuid });
+                        setData({ ...data, vendorUuid: vendorList.uuid });
                         setIsShowVendor(false);
                       }}
                       style={{
                         cursor: "pointer",
                       }}
                     >
-                      {selectedVendor.vendorCode +
-                        " - " +
-                        selectedVendor.supplierName}
+                      {vendorList.vendorCode + " - " + vendorList.supplierName}
                     </a>
                   </div>
                 )}
@@ -175,10 +239,10 @@ export default function ReceivingForm() {
                 {action == initialAction.view && (
                   <button
                     className="ms-2 btn btn-danger"
-                    // onClick={(e) => {
-                    //   e.preventDefault();
-                    //   setIsShowModal(true);
-                    // }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsShowModal(true);
+                    }}
                     data-bs-toggle="modal"
                     data-bs-target="#verticalycentered"
                   >
@@ -200,6 +264,7 @@ export default function ReceivingForm() {
           </form>
         </div>
       </div>
+      <ModalPopUp component={component} />
     </div>
   );
 }

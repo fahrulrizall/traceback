@@ -1,6 +1,6 @@
-import { validationResult } from "express-validator";
-import VendorsModel from "../models/vendors.js";
-import PlantsModel from "../models/plants.js";
+const { validationResult } = require("express-validator");
+const VendorsModel = require("../models/vendors.js");
+const PlantsModel = require("../models/plants.js");
 
 const pagedSearchVendors = async (req, res) => {
   const errros = validationResult(req);
@@ -155,7 +155,7 @@ const getVendorCode = async (req, res) => {
   }
 };
 
-export default {
+module.exports = {
   pagedSearchVendors,
   createNewVendor,
   updateVendor,

@@ -1,5 +1,5 @@
-import { validationResult } from "express-validator";
-import PlantsModel from "../models/plants.js";
+const { validationResult } = require("express-validator");
+const PlantsModel = require("../models/plants.js");
 
 const pagedSearchPlants = async (req, res) => {
   const errros = validationResult(req);
@@ -137,7 +137,7 @@ const readPlant = async (req, res) => {
   }
 };
 
-export default {
+module.exports = {
   pagedSearchPlants,
   getAllPlants,
   createNewPlant,

@@ -1,5 +1,5 @@
-import { v4 as uuidv4 } from "uuid";
-import DBpool from "../config/database.js";
+const { v4: uuidv4 } = require("uuid");
+const DBpool = require("../config/database.js");
 
 const pagedSearchUsers = (pageIndex, pageSize) => {
   const SQLQuery = `SELECT uuid, name, username, email FROM users ORDER BY createdDateTime DESC LIMIT ${pageSize} OFFSET ${
@@ -65,7 +65,7 @@ const readRefreshToken = (token) => {
   return DBpool.execute(SQLQuery);
 };
 
-export default {
+module.exports = {
   pagedSearchUsers,
   createNewUser,
   totalCountUsers,

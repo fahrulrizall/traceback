@@ -1,6 +1,7 @@
-import { validationResult } from "express-validator";
-import ReceivingModel from "../models/receiving.js";
-import VendorsModel from "../models/vendors.js";
+const { validationResult } = require("express-validator");
+const ReceivingModel = require("../models/receiving.js");
+const VendorsModel = require("../models/vendors.js");
+const moment = require("moment");
 
 const pagedSearchReceiving = async (req, res) => {
   const errros = validationResult(req);
@@ -18,16 +19,41 @@ const pagedSearchReceiving = async (req, res) => {
       pageSize
     );
 
+    const handleFishCode = (vendorCode, date, sequence) => {
+      const month = new Date(date).getUTCMonth() + 1;
+      const year = new Date(date).getFullYear().toString().substring(2);
+
+      let newSequence;
+
+      if (sequence < 10) {
+        newSequence = `${"00" + sequence}`;
+      } else if (sequence < 100) {
+        newSequence = `${0 + sequence}`;
+      } else {
+        newSequence = `${sequence}`;
+      }
+
+      if (month < 10) {
+        return `${vendorCode}.0${month + year}.${newSequence}`;
+      } else {
+        return `${vendorCode}.${month + year}.${newSequence}`;
+      }
+    };
+
     data.map((item) => {
-      (item.receivingDate = new Date(item.receivingDate).toLocaleDateString(
-        "id-ID",
-        {
-          day: "2-digit",
-          month: "short",
-          year: "numeric",
-        }
+      (item.fishCode = handleFishCode(
+        item.vendorCode,
+        item.receivingDate,
+        item.sequence
       )),
-        (item.fishCode = "asdasd");
+        (item.receivingDate = new Date(item.receivingDate).toLocaleDateString(
+          "id-ID",
+          {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          }
+        ));
     });
 
     const [totalCountPlants] = await ReceivingModel.totalCountReceiving();
@@ -54,11 +80,21 @@ const createNewReceiving = async (req, res) => {
   }
 
   const [vendor] = await VendorsModel.readUuid(request.vendorUuid);
+  const [sequence] = await ReceivingModel.readSequence(
+    request.receivingDate,
+    vendor[0].idVendor
+  );
+
+  const newSequence = sequence[0].max + 1;
 
   try {
-    await ReceivingModel.createNewReceiving(request, vendor[0].idVendor);
+    await ReceivingModel.createNewReceiving(
+      request,
+      newSequence,
+      vendor[0].idVendor
+    );
     res.status(201).json({
-      messages: request,
+      messages: "ssss",
     });
   } catch (error) {
     res.status(500).json({
@@ -77,7 +113,7 @@ const updateReceiving = async (req, res) => {
       messages: errros.array(),
     });
   }
-
+  const [vendor] = await VendorsModel.readUuid(request.vendorUuid);
   const [data] = await ReceivingModel.readReceiving(uuid);
 
   if (data.length === 0) {
@@ -87,7 +123,7 @@ const updateReceiving = async (req, res) => {
   }
 
   try {
-    await ReceivingModel.updateReceiving(request, uuid);
+    await ReceivingModel.updateReceiving(request, vendor[0].idVendor, uuid);
     res.json({
       data: {
         id: uuid,
@@ -102,6 +138,7 @@ const updateReceiving = async (req, res) => {
 };
 
 const deleteReceiving = async (req, res) => {
+  console.log("hjkhjbkj");
   const { uuid } = req.params;
 
   const [data] = await ReceivingModel.readReceiving(uuid);
@@ -130,6 +167,12 @@ const readReceiving = async (req, res) => {
   try {
     const [data] = await ReceivingModel.readReceiving(uuid);
 
+    console.log(data[0].receivingDate);
+
+    data.map((item) => {
+      item.receivingDate = moment(item.receivingDate).format("YYYY-MM-DD");
+    });
+
     res.json({
       data: data[0],
     });
@@ -140,7 +183,7 @@ const readReceiving = async (req, res) => {
   }
 };
 
-export default {
+module.exports = {
   pagedSearchReceiving,
   createNewReceiving,
   updateReceiving,

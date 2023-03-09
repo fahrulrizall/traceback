@@ -1,6 +1,6 @@
-import express from "express";
-import { body, query } from "express-validator";
-import UserController from "../controller/users.js";
+const express = require("express");
+const { body, query } = require("express-validator");
+const UserController = require("../controller/users.js");
 
 const userRoutes = express.Router();
 
@@ -31,4 +31,4 @@ userRoutes.patch(
 userRoutes.delete("/:uuid", UserController.deleteUser);
 userRoutes.get("/:uuid", UserController.readUser);
 
-export default userRoutes;
+module.exports = userRoutes;

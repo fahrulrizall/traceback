@@ -1,6 +1,6 @@
-import express from "express";
-import { body, query } from "express-validator";
-import TrimmingContoller from "../controller/trimming.js";
+const express = require("express");
+const { body, query } = require("express-validator");
+const TrimmingContoller = require("../controller/trimming.js");
 
 const trimmingRoutes = express.Router();
 
@@ -36,4 +36,4 @@ trimmingRoutes.patch(
 trimmingRoutes.delete("/:uuid", TrimmingContoller.deleteTrimming);
 trimmingRoutes.get("/:uuid", TrimmingContoller.readTrimming);
 
-export default trimmingRoutes;
+module.exports = trimmingRoutes;

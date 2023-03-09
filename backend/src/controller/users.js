@@ -1,6 +1,6 @@
-import { validationResult } from "express-validator";
-import bcrypt from "bcrypt";
-import UsersModel from "../models/users.js";
+const { validationResult } = require("express-validator");
+const bcrypt = require("bcrypt");
+const UsersModel = require("../models/users.js");
 
 const pagedSearchUsers = async (req, res) => {
   const errros = validationResult(req);
@@ -149,7 +149,7 @@ const readUser = async (req, res) => {
   }
 };
 
-export default {
+module.exports = {
   pagedSearchUsers,
   createNewUser,
   updateUser,

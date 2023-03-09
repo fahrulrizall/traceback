@@ -31,6 +31,7 @@ const Routes = createBrowserRouter(
 
         <Route path="receiving" element={<ReceivingTable />}>
           <Route path="add" element={<ReceivingForm />} />
+          <Route path="view/:uuid" element={<ReceivingForm />} />
         </Route>
 
         <Route path="retouching" element={<ReceivingTable />} />
