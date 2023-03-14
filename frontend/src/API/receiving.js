@@ -1,9 +1,17 @@
 import { _Get, _Post, _Patch, _Delete } from "./base";
+import Cookies from "js-cookie";
 
 const endpoint = "receiving";
 
 const PagedSearh = (pageIndex, pageSize) => {
-  let _options = { headers: { contentType: "application/json" } };
+  let accessToken = Cookies.get("accessToken");
+  let _options = {
+    headers: {
+      contentType: "application/json",
+      authorization: `bearer ${accessToken}`,
+    },
+    withCredentials: true,
+  };
   return _Get(`${process.env.REACT_APP_API_URL}/${endpoint}/search`, {
     params: {
       pageIndex,
@@ -14,19 +22,40 @@ const PagedSearh = (pageIndex, pageSize) => {
 };
 
 const CreateNewReceiving = (data) => {
-  let _options = { headers: { contentType: "application/json" } };
+  let accessToken = Cookies.get("accessToken");
+  let _options = {
+    headers: {
+      contentType: "application/json",
+      authorization: `bearer ${accessToken}`,
+    },
+    withCredentials: true,
+  };
   return _Post(`${process.env.REACT_APP_API_URL}/${endpoint}`, data, _options);
 };
 
 const ReadByUuid = (uuid) => {
-  let _options = { headers: { contentType: "application/json" } };
+  let accessToken = Cookies.get("accessToken");
+  let _options = {
+    headers: {
+      contentType: "application/json",
+      authorization: `bearer ${accessToken}`,
+    },
+    withCredentials: true,
+  };
   return _Get(`${process.env.REACT_APP_API_URL}/${endpoint}/${uuid}`, {
     ..._options,
   });
 };
 
 const Update = (uuid, data) => {
-  let _options = { headers: { contentType: "application/json" } };
+  let accessToken = Cookies.get("accessToken");
+  let _options = {
+    headers: {
+      contentType: "application/json",
+      authorization: `bearer ${accessToken}`,
+    },
+    withCredentials: true,
+  };
   return _Patch(
     `${process.env.REACT_APP_API_URL}/${endpoint}/${uuid}`,
     data,
@@ -35,7 +64,14 @@ const Update = (uuid, data) => {
 };
 
 const Delete = (uuid) => {
-  let _options = { headers: { contentType: "application/json" } };
+  let accessToken = Cookies.get("accessToken");
+  let _options = {
+    headers: {
+      contentType: "application/json",
+      authorization: `bearer ${accessToken}`,
+    },
+    withCredentials: true,
+  };
   return _Delete(
     `${process.env.REACT_APP_API_URL}/${endpoint}/${uuid}`,
     _options

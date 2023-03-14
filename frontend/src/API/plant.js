@@ -2,9 +2,9 @@ import { _Delete, _Get, _Patch, _Post } from "./base";
 import Cookies from "js-cookie";
 
 const endpoint = "plants";
-let accessToken = Cookies.get("accessToken");
 
 const PagedSearh = (pageIndex, pageSize) => {
+  let accessToken = Cookies.get("accessToken");
   let _options = {
     headers: {
       contentType: "application/json",
@@ -22,6 +22,7 @@ const PagedSearh = (pageIndex, pageSize) => {
 };
 
 const Create = (data) => {
+  let accessToken = Cookies.get("accessToken");
   let _options = {
     headers: {
       contentType: "application/json",
@@ -33,6 +34,7 @@ const Create = (data) => {
 };
 
 const GetAll = () => {
+  let accessToken = Cookies.get("accessToken");
   let _options = {
     headers: {
       contentType: "application/json",
@@ -46,6 +48,7 @@ const GetAll = () => {
 };
 
 const ReadByUuid = (uuid) => {
+  let accessToken = Cookies.get("accessToken");
   let _options = {
     headers: {
       contentType: "application/json",
@@ -59,6 +62,7 @@ const ReadByUuid = (uuid) => {
 };
 
 const Update = (uuid, data) => {
+  let accessToken = Cookies.get("accessToken");
   let _options = {
     headers: {
       contentType: "application/json",
@@ -74,6 +78,7 @@ const Update = (uuid, data) => {
 };
 
 const Delete = (uuid) => {
+  let accessToken = Cookies.get("accessToken");
   let _options = {
     headers: {
       contentType: "application/json",
