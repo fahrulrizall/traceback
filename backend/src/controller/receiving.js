@@ -94,7 +94,7 @@ const createNewReceiving = async (req, res) => {
       vendor[0].idVendor
     );
     res.status(201).json({
-      messages: "ssss",
+      messages: request,
     });
   } catch (error) {
     res.status(500).json({
@@ -138,7 +138,6 @@ const updateReceiving = async (req, res) => {
 };
 
 const deleteReceiving = async (req, res) => {
-  console.log("hjkhjbkj");
   const { uuid } = req.params;
 
   const [data] = await ReceivingModel.readReceiving(uuid);
@@ -166,8 +165,6 @@ const readReceiving = async (req, res) => {
 
   try {
     const [data] = await ReceivingModel.readReceiving(uuid);
-
-    console.log(data[0].receivingDate);
 
     data.map((item) => {
       item.receivingDate = moment(item.receivingDate).format("YYYY-MM-DD");

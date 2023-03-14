@@ -17,7 +17,6 @@ const totalCountVendors = () => {
 };
 
 const createNewVendors = (body) => {
-  console.log(body);
   const SQLQuery = `INSERT INTO vendors (uuid, supplierName, vendorCode, certificateType, fleet, owner, rawMaterialType, idPlant, createdDateTime) 
   VALUES ('${uuidv4()}','${body.supplierName}','${body.vendorCode}',
   '${body.certificateType}','${body.fleet}','${body.owner}','${
@@ -28,7 +27,6 @@ const createNewVendors = (body) => {
 };
 
 const updateVendor = (body, idPlant, uuid) => {
-  console.log(idPlant);
   const SQLQuery = `UPDATE vendors SET supplierName='${body.supplierName}', vendorCode='${body.vendorCode}', 
   certificateType='${body.certificateType}', fleet='${body.fleet}', owner='${body.owner}', 
   rawMaterialType='${body.rawMaterialType}', idPlant='${idPlant}', lastModifiedDateTime='UTC_TIMESTAMP()' WHERE uuid='${uuid}'`;

@@ -143,8 +143,6 @@ const getVendorCode = async (req, res) => {
   try {
     const [data] = await VendorsModel.readVendorCode(code);
 
-    console.log(data);
-
     res.json({
       data: data[0],
     });
