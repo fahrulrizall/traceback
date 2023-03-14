@@ -1,4 +1,4 @@
-import { _Post, _Get } from "./base";
+import { _Post, _Get, _Delete } from "./base";
 
 const endpoint = "auth";
 
@@ -11,6 +11,16 @@ const handleLogin = (model) => {
   );
 };
 
+const handleLogout = () => {
+  let _options = {
+    headers: { contentType: "application/json" },
+    withCredentials: true,
+  };
+  return _Delete(`${process.env.REACT_APP_API_URL}/${endpoint}/logout`, {
+    ..._options,
+  });
+};
+
 const getRefreshToken = () => {
   let _options = {
     headers: { contentType: "application/json" },
@@ -21,4 +31,4 @@ const getRefreshToken = () => {
   });
 };
 
-export { handleLogin, getRefreshToken };
+export { handleLogin, getRefreshToken, handleLogout };
