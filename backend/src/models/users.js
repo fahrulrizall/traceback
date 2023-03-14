@@ -16,9 +16,11 @@ const totalCountUsers = () => {
 };
 
 const createNewUser = (body) => {
-  const SQLQuery = `INSERT INTO users (uuid, name, username, email, password, createdDateTime) VALUES ('${uuidv4()}','${
+  const SQLQuery = `INSERT INTO users (uuid, name, username, email, password, idPlant, createdDateTime) VALUES ('${uuidv4()}','${
     body.name
-  }','${body.username}','${body.email}','${body.password}', UTC_TIMESTAMP())`;
+  }','${body.username}','${body.email}','${body.password}', '${
+    body.idPlant
+  }', UTC_TIMESTAMP())`;
 
   return DBpool.execute(SQLQuery);
 };

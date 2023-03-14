@@ -24,7 +24,6 @@ userRoutes.patch(
   [
     body("name").isLength({ min: 3 }).withMessage("name min 3"),
     body("email").isEmail().withMessage("invalid email address"),
-    body("username").isLength({ min: 8 }).withMessage("username min 8"),
   ],
   UserController.updateUser
 );

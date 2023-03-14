@@ -1,6 +1,7 @@
 const { validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
 const UsersModel = require("../models/users.js");
+const PlantModel = require("../models/plants.js");
 
 const pagedSearchUsers = async (req, res) => {
   const errros = validationResult(req);
@@ -54,6 +55,8 @@ const createNewUser = async (req, res) => {
     });
   }
 
+  const [plant] = await PlantModel.readUuid(request.plantUuid);
+
   const salt = await bcrypt.genSalt(10);
   const hashPassword = await bcrypt.hash(request.password, salt);
 
@@ -62,6 +65,7 @@ const createNewUser = async (req, res) => {
     email: request.email,
     password: hashPassword,
     username: request.username,
+    idPlant: plant[0].idPlant,
   };
 
   try {

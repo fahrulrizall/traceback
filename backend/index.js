@@ -1,4 +1,3 @@
-const bodyParser = require("body-parser");
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./src/routes/authentication.js");
@@ -14,15 +13,19 @@ require("dotenv").config();
 const port = process.env.PORT;
 const app = express();
 
-app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
-app.use(bodyParser.json()); // accept json
+app.use(
+  cors({
+    credentials: true,
+    origin: ["http://localhost:3000", "https://traceback.id"],
+  })
+);
+app.use(express.json());
 app.use(cookieParser());
-app.use(express.json()); // agar bisa terima format json
 
-app.use("/auth", authRoutes);
-app.use("/users", userRoutes);
-app.use("/plants", plantRoutes);
-app.use("/vendors", vendorRoutes);
-app.use("/receiving", receivingRoutes);
-app.use("/trimming", trimmingRoutes);
+app.use("/auth", VerifyToken, authRoutes);
+app.use("/users", VerifyToken, userRoutes);
+app.use("/plants", VerifyToken, plantRoutes);
+app.use("/vendors", VerifyToken, vendorRoutes);
+app.use("/receiving", VerifyToken, receivingRoutes);
+app.use("/trimming", VerifyToken, trimmingRoutes);
 app.listen(port);
