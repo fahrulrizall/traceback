@@ -1,6 +1,6 @@
-import express from "express";
-import { body, query } from "express-validator";
-import UserController from "../controller/users.js";
+const express = require("express");
+const { body, query } = require("express-validator");
+const UserController = require("../controller/users.js");
 
 const userRoutes = express.Router();
 
@@ -24,11 +24,10 @@ userRoutes.patch(
   [
     body("name").isLength({ min: 3 }).withMessage("name min 3"),
     body("email").isEmail().withMessage("invalid email address"),
-    body("username").isLength({ min: 8 }).withMessage("username min 8"),
   ],
   UserController.updateUser
 );
 userRoutes.delete("/:uuid", UserController.deleteUser);
 userRoutes.get("/:uuid", UserController.readUser);
 
-export default userRoutes;
+module.exports = userRoutes;

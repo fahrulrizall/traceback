@@ -1,8 +1,24 @@
-import { _Post } from "./base";
+import { _Post, _Get } from "./base";
+
+const endpoint = "auth";
 
 const handleLogin = (model) => {
   const options = { headers: { contentType: "application/json" } };
-  return _Post("http://localhost:4000/auth/login", model, options);
+  return _Post(
+    `${process.env.REACT_APP_API_URL}/${endpoint}/login`,
+    model,
+    options
+  );
 };
 
-export { handleLogin };
+const getRefreshToken = () => {
+  let _options = {
+    headers: { contentType: "application/json" },
+    withCredentials: true,
+  };
+  return _Get(`${process.env.REACT_APP_API_URL}/${endpoint}/token`, {
+    ..._options,
+  });
+};
+
+export { handleLogin, getRefreshToken };

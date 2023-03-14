@@ -2,20 +2,30 @@ import React, { useState } from "react";
 import { handleLogin } from "../API/auth";
 import Cookies from "js-cookie";
 
-export default function Login() {
+export default function Login({ setIsValidLogin }) {
   const initial = {
     username: "username",
     password: "password",
   };
+
+  const accessToken = "accessToken";
+
   const [user, setUser] = useState(initial);
   const [isSuccess, setIsSuccess] = useState(true);
   const [isloading, setIsLoading] = useState(false);
 
-  const onClickLogin = () => {
+  const onClickLogin = async () => {
     setIsLoading(true);
+
     handleLogin(user)
-      .then((res) => Cookies.set("accessToken", res.accessToken))
-      .catch((error) => setIsSuccess(false));
+      .then((res) => {
+        setIsValidLogin(true);
+        Cookies.set(accessToken, res.data.accessToken);
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        setIsSuccess(false);
+      });
   };
 
   return (
@@ -45,9 +55,9 @@ export default function Login() {
                     </p>
                   </div>
 
-                  <form className="row g-3 needs-validation" novalidate="">
+                  <form className="row g-3 needs-validation" noValidate="">
                     <div className="col-12">
-                      <label for="yourUsername" className="form-label">
+                      <label htmlFor="yourUsername" className="form-label">
                         Username
                       </label>
                       <div className="input-group has-validation">
@@ -69,7 +79,7 @@ export default function Login() {
                     </div>
 
                     <div className="col-12">
-                      <label for="yourPassword" className="form-label">
+                      <label htmlFor="yourPassword" className="form-label">
                         Password
                       </label>
                       <input

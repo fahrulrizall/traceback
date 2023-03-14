@@ -1,5 +1,6 @@
-import { validationResult } from "express-validator";
-import VendorsModel from "../models/vendors.js";
+const { validationResult } = require("express-validator");
+const VendorsModel = require("../models/vendors.js");
+const PlantsModel = require("../models/plants.js");
 
 const pagedSearchVendors = async (req, res) => {
   const errros = validationResult(req);
@@ -37,14 +38,17 @@ const createNewVendor = async (req, res) => {
     });
   }
 
+  const [uuid] = await PlantsModel.readUuid(request.idPlant);
+
   const data = {
     supplierName: request.supplierName,
     certificateType: request.certificateType,
+    vendorCode: request.vendorCode,
     fleet: request.fleet,
     owner: request.owner,
-    materialType: request.materialType,
+    rawMaterialType: request.rawMaterialType,
     fairtradeNo: request.fairtradeNo,
-    idPlant: request.idPlant,
+    idPlant: uuid[0].idPlant,
   };
 
   try {
@@ -70,16 +74,17 @@ const updateVendor = async (req, res) => {
     });
   }
 
-  const [data] = await VendorsModel.readVendor(uuid);
+  const [vendor] = await VendorsModel.readVendor(uuid);
+  const [plant] = await PlantsModel.readUuid(request.idPlant);
 
-  if (data.length === 0) {
+  if (vendor.length === 0) {
     return res.status(400).json({
       messages: "uuid not exist",
     });
   }
 
   try {
-    await VendorsModel.updateVendor(request, uuid);
+    await VendorsModel.updateVendor(request, plant[0].idPlant, uuid);
     res.json({
       data: {
         id: uuid,
@@ -132,10 +137,27 @@ const readVendor = async (req, res) => {
   }
 };
 
-export default {
+const getVendorCode = async (req, res) => {
+  const { code } = req.params;
+
+  try {
+    const [data] = await VendorsModel.readVendorCode(code);
+
+    res.json({
+      data: data[0],
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: `vendor code not exist`,
+    });
+  }
+};
+
+module.exports = {
   pagedSearchVendors,
   createNewVendor,
   updateVendor,
   deleteVendor,
   readVendor,
+  getVendorCode,
 };

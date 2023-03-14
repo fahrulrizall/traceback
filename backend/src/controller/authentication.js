@@ -1,6 +1,6 @@
-import UsersModel from "../models/users.js";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+const UsersModel = require("../models/users.js");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const login = async (req, res) => {
   try {
@@ -25,22 +25,18 @@ const login = async (req, res) => {
 
     const uuid = data[0].uuid;
     const username = data[0].username;
-    const email = data[0].email;
 
     const accessToken = jwt.sign(
-      { uuid, username, email },
+      { uuid, username },
       process.env.ACCESS_TOKEN_SECRET,
       {
-        expiresIn: "15s",
+        expiresIn: "1d",
       }
     );
 
     const refreshToken = jwt.sign(
-      { uuid, username, email },
-      process.env.REFRESH_TOKEN_SECRET,
-      {
-        expiresIn: "1d",
-      }
+      { uuid, username },
+      process.env.REFRESH_TOKEN_SECRET
     );
 
     await UsersModel.updateRefreshToken(refreshToken, uuid);
@@ -48,7 +44,7 @@ const login = async (req, res) => {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
-      // secure: true (jika menggunakan https)
+      secure: true,
     });
 
     res.json({
@@ -89,10 +85,9 @@ const refreshToken = async (req, res) => {
 
         const uuid = data[0].uuid;
         const username = data[0].username;
-        const email = data[0].email;
 
         const accessToken = jwt.sign(
-          { uuid, username, email },
+          { uuid, username },
           process.env.ACCESS_TOKEN_SECRET,
           {
             expiresIn: "1d",
@@ -109,4 +104,4 @@ const refreshToken = async (req, res) => {
   }
 };
 
-export default { login, logout, refreshToken };
+module.exports = { login, logout, refreshToken };

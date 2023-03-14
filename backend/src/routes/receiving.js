@@ -1,6 +1,6 @@
-import express from "express";
-import { body, query } from "express-validator";
-import ReceivingContoller from "../controller/receiving.js";
+const express = require("express");
+const { body, query } = require("express-validator");
+const ReceivingContoller = require("../controller/receiving.js");
 
 const receivingRoutes = express.Router();
 
@@ -17,7 +17,6 @@ receivingRoutes.post(
     body("grade").notEmpty().withMessage("grade date mandatory"),
     body("size").notEmpty().withMessage("size date mandatory"),
     body("weight").notEmpty().withMessage("weight date mandatory"),
-    body("idVendor").notEmpty().withMessage("idVendor date mandatory"),
   ],
   ReceivingContoller.createNewReceiving
 );
@@ -29,11 +28,10 @@ receivingRoutes.patch(
     body("grade").notEmpty(),
     body("size").notEmpty(),
     body("weight").notEmpty(),
-    body("idVendor").notEmpty(),
   ],
   ReceivingContoller.updateReceiving
 );
 receivingRoutes.delete("/:uuid", ReceivingContoller.deleteReceiving);
 receivingRoutes.get("/:uuid", ReceivingContoller.readReceiving);
 
-export default receivingRoutes;
+module.exports = receivingRoutes;

@@ -1,10 +1,16 @@
-import { v4 as uuidv4 } from "uuid";
-import DBpool from "../config/database.js";
+const { v4: uuidv4 } = require("uuid");
+const DBpool = require("../config/database.js");
 
 const pagedSearchPlants = (pageIndex, pageSize) => {
-  const SQLQuery = `SELECT uuid, name, location, batchCode FROM plants ORDER BY createdDateTime DESC LIMIT ${pageSize} OFFSET ${
+  const SQLQuery = `SELECT uuid, name, location, batchCode, plantCode FROM plants ORDER BY createdDateTime DESC LIMIT ${pageSize} OFFSET ${
     pageIndex * pageSize
   }`;
+
+  return DBpool.execute(SQLQuery);
+};
+
+const getAllPlants = () => {
+  const SQLQuery = `SELECT uuid, name, location, batchCode, plantCode FROM plants ORDER BY createdDateTime DESC`;
 
   return DBpool.execute(SQLQuery);
 };
@@ -16,15 +22,17 @@ const totalCountPlants = () => {
 };
 
 const createNewPlant = (body) => {
-  const SQLQuery = `INSERT INTO plants (uuid, name, location, batchCode, createdDateTime) VALUES ('${uuidv4()}','${
+  const SQLQuery = `INSERT INTO plants (uuid, name, location, batchCode, plantCode, createdDateTime) VALUES ('${uuidv4()}','${
     body.name
-  }','${body.location}','${body.batchCode}', UTC_TIMESTAMP())`;
+  }','${body.location}','${body.batchCode}', '${
+    body.plantCode
+  }', UTC_TIMESTAMP())`;
 
   return DBpool.execute(SQLQuery);
 };
 
 const updatePlant = (body, uuid) => {
-  const SQLQuery = `UPDATE plants SET name='${body.name}', location='${body.location}', batchCode='${body.batchCode}'  WHERE uuid='${uuid}'`;
+  const SQLQuery = `UPDATE plants SET name='${body.name}', location='${body.location}', batchCode='${body.batchCode}', plantCode='${body.plantCode}'  WHERE uuid='${uuid}'`;
 
   return DBpool.execute(SQLQuery);
 };
@@ -36,16 +44,24 @@ const deletePlant = (uuid) => {
 };
 
 const readPlant = (uuid) => {
-  const SQLQuery = `SELECT uuid, name, location, batchCode FROM plants WHERE uuid='${uuid}'`;
+  const SQLQuery = `SELECT uuid, name, location, batchCode, plantCode FROM plants WHERE uuid='${uuid}'`;
 
   return DBpool.execute(SQLQuery);
 };
 
-export default {
+const readUuid = (uuid) => {
+  const SQLQuery = `SELECT idPlant FROM plants WHERE uuid='${uuid}'`;
+
+  return DBpool.execute(SQLQuery);
+};
+
+module.exports = {
   pagedSearchPlants,
+  getAllPlants,
   createNewPlant,
   totalCountPlants,
   updatePlant,
   deletePlant,
   readPlant,
+  readUuid,
 };

@@ -1,12 +1,10 @@
 import "./style.css";
+import "./style.custom.css";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import Routes from "./Routes";
-import { RouterProvider } from "react-router-dom";
+import App from "./App";
+import axios from "axios";
+axios.defaults.withCredentials = true;
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
-  <React.StrictMode>
-    <RouterProvider router={Routes} />
-  </React.StrictMode>
-);
+root.render(<App />);

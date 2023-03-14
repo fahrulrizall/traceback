@@ -1,9 +1,10 @@
-import express from "express";
-import { body, query } from "express-validator";
-import PlantContoller from "../controller/plants.js";
+const express = require("express");
+const { body, query } = require("express-validator");
+const PlantContoller = require("../controller/plants.js");
 
 const plantRoutes = express.Router();
 
+plantRoutes.get("/", PlantContoller.getAllPlants);
 plantRoutes.get(
   "/search",
   [query("pageIndex").not().isEmpty(), query("pageSize").not().isEmpty()],
@@ -30,4 +31,4 @@ plantRoutes.patch(
 plantRoutes.delete("/:uuid", PlantContoller.deletePlant);
 plantRoutes.get("/:uuid", PlantContoller.readPlant);
 
-export default plantRoutes;
+module.exports = plantRoutes;

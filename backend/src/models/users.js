@@ -1,5 +1,5 @@
-import { v4 as uuidv4 } from "uuid";
-import DBpool from "../config/database.js";
+const { v4: uuidv4 } = require("uuid");
+const DBpool = require("../config/database.js");
 
 const pagedSearchUsers = (pageIndex, pageSize) => {
   const SQLQuery = `SELECT uuid, name, username, email FROM users ORDER BY createdDateTime DESC LIMIT ${pageSize} OFFSET ${
@@ -16,9 +16,11 @@ const totalCountUsers = () => {
 };
 
 const createNewUser = (body) => {
-  const SQLQuery = `INSERT INTO users (uuid, name, username, email, password, createdDateTime) VALUES ('${uuidv4()}','${
+  const SQLQuery = `INSERT INTO users (uuid, name, username, email, password, idPlant, createdDateTime) VALUES ('${uuidv4()}','${
     body.name
-  }','${body.username}','${body.email}','${body.password}', UTC_TIMESTAMP())`;
+  }','${body.username}','${body.email}','${body.password}', '${
+    body.idPlant
+  }', UTC_TIMESTAMP())`;
 
   return DBpool.execute(SQLQuery);
 };
@@ -65,7 +67,7 @@ const readRefreshToken = (token) => {
   return DBpool.execute(SQLQuery);
 };
 
-export default {
+module.exports = {
   pagedSearchUsers,
   createNewUser,
   totalCountUsers,

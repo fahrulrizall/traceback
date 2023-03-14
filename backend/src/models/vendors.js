@@ -1,8 +1,9 @@
-import { v4 as uuidv4 } from "uuid";
-import DBpool from "../config/database.js";
+const { v4: uuidv4 } = require("uuid");
+const DBpool = require("../config/database.js");
 
 const pagedSearchVendors = (pageIndex, pageSize) => {
-  const SQLQuery = `SELECT uuid, supplierName, certificateType, fleet, owner, rawMaterialType FROM vendors ORDER BY createdDateTime DESC LIMIT ${pageSize} OFFSET ${
+  const SQLQuery = `SELECT vendors.uuid, vendors.vendorCode, vendors.supplierName, vendors.certificateType, vendors.fleet, vendors.owner, vendors.rawMaterialType, plants.plantCode 
+  FROM vendors JOIN plants ON vendors.idPlant = plants.idPlant ORDER BY vendors.createdDateTime DESC LIMIT ${pageSize} OFFSET ${
     pageIndex * pageSize
   }`;
 
@@ -16,8 +17,8 @@ const totalCountVendors = () => {
 };
 
 const createNewVendors = (body) => {
-  const SQLQuery = `INSERT INTO vendors (uuid, supplierName, certificateType, fleet, owner, rawMaterialType, idPlant, createdDateTime) 
-  VALUES ('${uuidv4()}','${body.supplierName}',
+  const SQLQuery = `INSERT INTO vendors (uuid, supplierName, vendorCode, certificateType, fleet, owner, rawMaterialType, idPlant, createdDateTime) 
+  VALUES ('${uuidv4()}','${body.supplierName}','${body.vendorCode}',
   '${body.certificateType}','${body.fleet}','${body.owner}','${
     body.rawMaterialType
   }','${body.idPlant}', UTC_TIMESTAMP())`;
@@ -25,8 +26,10 @@ const createNewVendors = (body) => {
   return DBpool.execute(SQLQuery);
 };
 
-const updateVendor = (body, uuid) => {
-  const SQLQuery = `UPDATE vendors SET supplierName='${body.supplierName}', certificateType='${body.certificateType}', fleet='${body.fleet}', owner='${body.owner}', rawmaterialType='${body.rawmaterialType}',lastModifiedDateTime='UTC_TIMESTAMP()' WHERE uuid='${uuid}'`;
+const updateVendor = (body, idPlant, uuid) => {
+  const SQLQuery = `UPDATE vendors SET supplierName='${body.supplierName}', vendorCode='${body.vendorCode}', 
+  certificateType='${body.certificateType}', fleet='${body.fleet}', owner='${body.owner}', 
+  rawMaterialType='${body.rawMaterialType}', idPlant='${idPlant}', lastModifiedDateTime='UTC_TIMESTAMP()' WHERE uuid='${uuid}'`;
 
   return DBpool.execute(SQLQuery);
 };
@@ -38,16 +41,31 @@ const deleteVendor = (uuid) => {
 };
 
 const readVendor = (uuid) => {
-  const SQLQuery = `SELECT uuid, supplierName, certificateType, fleet, owner, rawMaterialType FROM vendors WHERE uuid='${uuid}'`;
+  const SQLQuery = `SELECT vendors.uuid, vendors.supplierName, vendors.vendorCode, vendors.certificateType, vendors.fleet, vendors.owner, vendors.rawMaterialType, plants.uuid as idPlant
+  FROM vendors JOIN plants ON vendors.idPlant = plants.idPlant WHERE vendors.uuid='${uuid}'`;
 
   return DBpool.execute(SQLQuery);
 };
 
-export default {
+const readVendorCode = (code) => {
+  const SQLQuery = `SELECT uuid, vendorCode, supplierName from vendors where vendorCode='${code}'`;
+
+  return DBpool.execute(SQLQuery);
+};
+
+const readUuid = (uuid) => {
+  const SQLQuery = `SELECT idVendor FROM vendors WHERE uuid='${uuid}'`;
+
+  return DBpool.execute(SQLQuery);
+};
+
+module.exports = {
   pagedSearchVendors,
   createNewVendors,
   totalCountVendors,
   updateVendor,
   deleteVendor,
   readVendor,
+  readVendorCode,
+  readUuid,
 };

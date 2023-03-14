@@ -1,6 +1,6 @@
-import express from "express";
-import { body, query } from "express-validator";
-import VendorController from "../controller/vendors.js";
+const express = require("express");
+const { body, query } = require("express-validator");
+const VendorController = require("../controller/vendors.js");
 
 const vendorRoutes = express.Router();
 
@@ -31,5 +31,6 @@ vendorRoutes.patch(
 );
 vendorRoutes.delete("/:uuid", VendorController.deleteVendor);
 vendorRoutes.get("/:uuid", VendorController.readVendor);
+vendorRoutes.get("/searchcode/:code", VendorController.getVendorCode);
 
-export default vendorRoutes;
+module.exports = vendorRoutes;

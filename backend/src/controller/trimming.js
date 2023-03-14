@@ -1,9 +1,7 @@
 const { validationResult } = require("express-validator");
-const bcrypt = require("bcrypt");
-const UsersModel = require("../models/users.js");
-const PlantModel = require("../models/plants.js");
+const TrimmingModel = require("../models/trimming.js");
 
-const pagedSearchUsers = async (req, res) => {
+const pagedSearchTrimming = async (req, res) => {
   const errros = validationResult(req);
   const { pageIndex, pageSize } = req.query;
 
@@ -14,12 +12,12 @@ const pagedSearchUsers = async (req, res) => {
   }
 
   try {
-    const [data] = await UsersModel.pagedSearchUsers(pageIndex, pageSize);
+    const [data] = await TrimmingModel.pagedSearchTrimming(pageIndex, pageSize);
 
-    const [totalCountUsers] = await UsersModel.totalCountUsers();
+    const [totalCount] = await TrimmingModel.totalCountTrimming();
 
     res.json({
-      totalCount: totalCountUsers[0].totalCount,
+      totalCount: totalCount[0].totalCount,
       data: data,
     });
   } catch (error) {
@@ -29,7 +27,7 @@ const pagedSearchUsers = async (req, res) => {
   }
 };
 
-const createNewUser = async (req, res) => {
+const createNewTrimming = async (req, res) => {
   const errros = validationResult(req);
   const request = req.body;
 
@@ -39,48 +37,19 @@ const createNewUser = async (req, res) => {
     });
   }
 
-  const [email] = await UsersModel.emailUserExist(request.email);
-
-  if (email.length > 0) {
-    return res.status(400).json({
-      messages: "Email already exist",
-    });
-  }
-
-  const [username] = await UsersModel.userNameExist(request.username);
-
-  if (username.length > 0) {
-    return res.status(400).json({
-      messages: "Username already exist",
-    });
-  }
-
-  const [plant] = await PlantModel.readUuid(request.plantUuid);
-
-  const salt = await bcrypt.genSalt(10);
-  const hashPassword = await bcrypt.hash(request.password, salt);
-
-  const data = {
-    name: request.name,
-    email: request.email,
-    password: hashPassword,
-    username: request.username,
-    idPlant: plant[0].idPlant,
-  };
-
   try {
-    await UsersModel.createNewUser(data);
+    await TrimmingModel.createNewTrimming(request);
     res.status(201).json({
       messages: request,
     });
   } catch (error) {
     res.status(500).json({
-      messages: request,
+      messages: "Error",
     });
   }
 };
 
-const updateUser = async (req, res) => {
+const updateTrimming = async (req, res) => {
   const { uuid } = req.params;
   const request = req.body;
   const errros = validationResult(req);
@@ -91,7 +60,7 @@ const updateUser = async (req, res) => {
     });
   }
 
-  const [data] = await UsersModel.readUser(uuid);
+  const [data] = await TrimmingModel.readTrimming(uuid);
 
   if (data.length === 0) {
     return res.status(400).json({
@@ -100,7 +69,7 @@ const updateUser = async (req, res) => {
   }
 
   try {
-    await UsersModel.updateUser(request, uuid);
+    await TrimmingModel.updateTrimming(request, uuid);
     res.json({
       data: {
         id: uuid,
@@ -114,10 +83,10 @@ const updateUser = async (req, res) => {
   }
 };
 
-const deleteUser = async (req, res) => {
+const deleteTrimming = async (req, res) => {
   const { uuid } = req.params;
 
-  const [data] = await UsersModel.readUser(uuid);
+  const [data] = await TrimmingModel.readTrimming(uuid);
 
   if (data.length === 0) {
     return res.status(400).json({
@@ -126,7 +95,7 @@ const deleteUser = async (req, res) => {
   }
 
   try {
-    await UsersModel.deleteUser(uuid);
+    await TrimmingModel.deleteTrimming(uuid);
     res.json({
       id: uuid,
     });
@@ -137,11 +106,11 @@ const deleteUser = async (req, res) => {
   }
 };
 
-const readUser = async (req, res) => {
+const readTrimming = async (req, res) => {
   const { uuid } = req.params;
 
   try {
-    const [data] = await UsersModel.readUser(uuid);
+    const [data] = await TrimmingModel.readTrimming(uuid);
 
     res.json({
       data: data[0],
@@ -154,9 +123,9 @@ const readUser = async (req, res) => {
 };
 
 module.exports = {
-  pagedSearchUsers,
-  createNewUser,
-  updateUser,
-  deleteUser,
-  readUser,
+  pagedSearchTrimming,
+  createNewTrimming,
+  updateTrimming,
+  deleteTrimming,
+  readTrimming,
 };
