@@ -37,7 +37,7 @@ export default function ReceivingForm() {
   const [action, setAction] = useState(initialAction.create);
 
   useEffect(() => {
-    if (data.vendorCode && data.vendorCode.length === 3) {
+    if (data.vendorCode && data.vendorCode.length === 5) {
       GetVendorCode(data.vendorCode).then((response) => {
         setVendorList(response.data.data);
       });
@@ -200,7 +200,7 @@ export default function ReceivingForm() {
               </label>
               <div className="col-sm-10">
                 <input
-                  type="number"
+                  type="text"
                   className="form-control"
                   list="vendors"
                   onChange={(e) => {
